@@ -1,0 +1,23 @@
+Host server
+    HostName 93.127.180.88
+    User root
+    Port 22
+    PasswordAuthentication yes
+    PubkeyAuthentication no
+    PreferredAuthentications password
+    StrictHostKeyChecking no
+    UserKnownHostsFile NUL
+    ConnectTimeout 10
+    # Password: 7h5Za9mM8K
+
+# Alternative configuration for direct connection
+Host server-direct
+    HostName 93.127.180.88
+    User root
+    Port 22
+    PasswordAuthentication yes
+    PubkeyAuthentication no
+    KbdInteractiveAuthentication yes
+    ChallengeResponseAuthentication yes
+    StrictHostKeyChecking no
+    UserKnownHostsFile NUL

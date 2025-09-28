@@ -1,0 +1,25 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="heart" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#dc2626;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="512" height="512" rx="80" fill="url(#bg)"/>
+  
+  <!-- Heart Symbol -->
+  <path d="M256 384c-8-8-80-72-80-144 0-40 32-72 72-72 20 0 40 8 52 28 12-20 32-28 52-28 40 0 72 32 72 72 0 72-72 136-80 144l-44 44-44-44z" fill="url(#heart)"/>
+  
+  <!-- Medical Cross -->
+  <rect x="240" y="200" width="32" height="112" fill="white" rx="4"/>
+  <rect x="184" y="240" width="144" height="32" fill="white" rx="4"/>
+  
+  <!-- Persian Text "دیالرن" -->
+  <text x="256" y="460" font-family="Arial, sans-serif" font-size="48" font-weight="bold" text-anchor="middle" fill="white">دیالرن</text>
+</svg>

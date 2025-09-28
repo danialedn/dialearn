@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سوالات آفلاین - دیالرن</title>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            color: #4f46e5;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ef4444;
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.online {
+            background: #10b981;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .main-content {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e5e7eb;
+            border-top: 4px solid #4f46e5;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .stages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stage-card {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stage-card:hover {
+            border-color: #4f46e5;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.15);
+        }
+
+        .stage-card.active {
+            border-color: #4f46e5;
+            background: #eef2ff;
+        }
+
+        .stage-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .stage-level {
+            background: #4f46e5;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .questions-count {
+            background: #10b981;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+        }
+
+        .stage-name {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 5px;
+        }
+
+        .question-item {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .question-item:hover {
+            border-color: #4f46e5;
+            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.1);
+        }
+
+        .question-text {
+            font-weight: 500;
+            margin-bottom: 10px;
+            color: #374151;
+        }
+
+        .question-options {
+            display: grid;
+            gap: 8px;
+        }
+
+        .option {
+            padding: 8px 12px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.875rem;
+        }
+
+        .option:hover {
+            background: #f3f4f6;
+            border-color: #d1d5db;
+        }
+
+        .option.selected {
+            background: #eef2ff;
+            border-color: #4f46e5;
+            color: #4f46e5;
+        }
+
+        .option.correct {
+            background: #dcfce7;
+            border-color: #10b981;
+            color: #059669;
+        }
+
+        .option.incorrect {
+            background: #fee2e2;
+            border-color: #ef4444;
+            color: #dc2626;
+        }
+
+        .question-explanation {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            color: #0c4a6e;
+            display: none;
+        }
+
+        .question-explanation.show {
+            display: block;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4338ca;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #4f46e5;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-top: 5px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6b7280;
+        }
+
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 20px;
+            opacity: 0.5;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: all 0.2s ease;
+        }
+
+        .back-btn:hover {
+            background: white;
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .stages-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .controls {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="back-btn" onclick="goBack()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="m12 19-7-7 7-7"/>
+            <path d="M19 12H5"/>
+        </svg>
+    </button>
+
+    <div class="container">
+        <div class="header">
+            <h1>سوالات آفلاین</h1>
+            <div class="status">
+                <div class="status-indicator" id="statusIndicator"></div>
+                <span id="statusText">در حال بررسی اتصال...</span>
+            </div>
+            <button onclick="clearOfflineCache()" style="background: #ef4444; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; margin: 10px 0; font-size: 14px;">
+                پاک کردن Cache
+            </button>
+            <p>مطالعه و تمرین سوالات در حالت آفلاین</p>
+        </div>
+
+        <div class="main-content">
+            <div class="loading" id="loading">
+                <div class="loading-spinner"></div>
+                <p>در حال بارگذاری سوالات...</p>
+            </div>
+
+            <div id="content" style="display: none;">
+                <div class="stats" id="stats"></div>
+                
+                <div class="controls">
+                    <button class="btn btn-primary" onclick="showAllQuestions()">نمایش همه سوالات</button>
+                    <button class="btn btn-secondary" onclick="showByStages()">نمایش بر اساس مرحله</button>
+                    <button class="btn btn-success" onclick="refreshQuestions()">به‌روزرسانی</button>
+                    <button class="btn btn-secondary" onclick="clearOfflineCache()" style="margin-right: 10px;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                        </svg>
+                        پاک کردن Cache
+                    </button>
+                </div>
+
+                <div id="questionsContainer"></div>
+            </div>
+
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                </svg>
+                <h3>سوالی یافت نشد</h3>
+                <p>هنوز سوالی برای نمایش آفلاین ذخیره نشده است.</p>
+                <p>لطفاً در زمان اتصال به اینترنت، صفحه اصلی را بازدید کنید تا سوالات دانلود شوند.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/offline-questions.js?v=20241227b"></script>
+    <script>
+        let currentView = 'stages';
+        let allQuestions = [];
+        let allStages = [];
+        let selectedAnswers = {};
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', async () => {
+            updateConnectionStatus();
+            
+            // Wait for the offline questions manager to be available
+            let attempts = 0;
+            while (!window.offlineQuestionsManager && attempts < 50) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+                attempts++;
+            }
+            
+            if (window.offlineQuestionsManager) {
+                await loadOfflineQuestions();
+            } else {
+                console.error('مدیریت سوالات آفلاین در دسترس نیست');
+                showEmptyState();
+            }
+            
+            // Listen for online/offline events
+            window.addEventListener('online', updateConnectionStatus);
+            window.addEventListener('offline', updateConnectionStatus);
+        });
+
+        function updateConnectionStatus() {
+            const indicator = document.getElementById('statusIndicator');
+            const text = document.getElementById('statusText');
+            
+            if (navigator.onLine) {
+                indicator.classList.add('online');
+                text.textContent = 'آنلاین';
+            } else {
+                indicator.classList.remove('online');
+                text.textContent = 'آفلاین';
+            }
+        }
+
+        async function loadOfflineQuestions() {
+            try {
+                if (!window.offlineQuestionsManager) {
+                    throw new Error('مدیریت سوالات آفلاین در دسترس نیست');
+                }
+
+                // Wait for initialization to complete (already started in DOMContentLoaded)
+                await window.offlineQuestionsManager.ensureInitialized();
+                
+                // Check if questions are cached
+                const isCached = await window.offlineQuestionsManager.isQuestionsCached();
+                
+                if (!isCached && navigator.onLine) {
+                    // Auto-download questions if not cached and online
+                    console.log('سوالات cache نشده‌اند، در حال دانلود...');
+                    document.getElementById('loading').style.display = 'block';
+                    await window.offlineQuestionsManager.storeAllQuestions();
+                }
+                
+                allQuestions = await window.offlineQuestionsManager.getAllQuestions();
+                allStages = await window.offlineQuestionsManager.getAllStages();
+
+                if (allQuestions.length === 0) {
+                    showEmptyState();
+                } else {
+                    showContent();
+                    updateStats();
+                    showByStages();
+                }
+            } catch (error) {
+                console.error('خطا در بارگذاری سوالات آفلاین:', error);
+                showEmptyState();
+            }
+        }
+
+        function showContent() {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('content').style.display = 'block';
+            document.getElementById('emptyState').style.display = 'none';
+        }
+
+        function showEmptyState() {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('content').style.display = 'none';
+            document.getElementById('emptyState').style.display = 'block';
+        }
+
+        function updateStats() {
+            const statsContainer = document.getElementById('stats');
+            const totalQuestions = allQuestions.length;
+            const totalStages = allStages.length;
+            const answeredQuestions = Object.keys(selectedAnswers).length;
+
+            statsContainer.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-number">${totalQuestions}</div>
+                    <div class="stat-label">کل سوالات</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${totalStages}</div>
+                    <div class="stat-label">مراحل</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${answeredQuestions}</div>
+                    <div class="stat-label">پاسخ داده شده</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${totalQuestions - answeredQuestions}</div>
+                    <div class="stat-label">باقی مانده</div>
+                </div>
+            `;
+        }
+
+        function showByStages() {
+            currentView = 'stages';
+            const container = document.getElementById('questionsContainer');
+            
+            if (allStages.length === 0) {
+                container.innerHTML = '<p class="text-center">مرحله‌ای یافت نشد</p>';
+                return;
+            }
+
+            let html = '<div class="stages-grid">';
+            
+            allStages.forEach(stage => {
+                const stageQuestions = allQuestions.filter(q => q.stage_id === stage.id);
+                html += `
+                    <div class="stage-card" onclick="showStageQuestions(${stage.id})">
+                        <div class="stage-header">
+                            <div class="stage-level">مرحله ${stage.level}</div>
+                            <div class="questions-count">${stageQuestions.length} سوال</div>
+                        </div>
+                        <div class="stage-name">${stage.name}</div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function showStageQuestions(stageId) {
+            const stage = allStages.find(s => s.id === stageId);
+            const questions = allQuestions.filter(q => q.stage_id === stageId);
+            
+            const container = document.getElementById('questionsContainer');
+            
+            let html = `
+                <div style="margin-bottom: 20px;">
+                    <button class="btn btn-secondary" onclick="showByStages()">← بازگشت به مراحل</button>
+                    <h2 style="margin: 10px 0; color: #4f46e5;">${stage.name}</h2>
+                    <p style="color: #6b7280;">مرحله ${stage.level} - ${questions.length} سوال</p>
+                </div>
+            `;
+            
+            questions.forEach((question, index) => {
+                html += createQuestionHTML(question, index);
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function showAllQuestions() {
+            currentView = 'all';
+            const container = document.getElementById('questionsContainer');
+            
+            let html = '<h2 style="margin-bottom: 20px; color: #4f46e5;">همه سوالات</h2>';
+            
+            allQuestions.forEach((question, index) => {
+                html += createQuestionHTML(question, index);
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function createQuestionHTML(question, index) {
+            const questionId = `question_${question.id}`;
+            const selectedAnswer = selectedAnswers[question.id];
+            
+            return `
+                <div class="question-item" id="${questionId}">
+                    <div class="question-text">
+                        <strong>سوال ${index + 1}:</strong> ${question.question_text}
+                    </div>
+                    <div class="question-options">
+                        ${Object.entries(question.options).map(([key, value]) => `
+                            <div class="option ${selectedAnswer === key ? 'selected' : ''} ${selectedAnswer && key === question.correct_answer ? 'correct' : ''} ${selectedAnswer && selectedAnswer === key && key !== question.correct_answer ? 'incorrect' : ''}" 
+                                 onclick="selectAnswer(${question.id}, '${key}')">
+                                <strong>${key})</strong> ${value}
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="question-explanation ${selectedAnswer ? 'show' : ''}" id="explanation_${question.id}">
+                        <strong>توضیح:</strong> ${question.explanation}
+                    </div>
+                </div>
+            `;
+        }
+
+        function selectAnswer(questionId, answer) {
+            selectedAnswers[questionId] = answer;
+            
+            // Store answer offline
+            if (window.offlineQuestionsManager) {
+                const question = allQuestions.find(q => q.id === questionId);
+                const isCorrect = answer === question.correct_answer;
+                window.offlineQuestionsManager.storeUserAnswer(questionId, question.stage_id, answer, isCorrect);
+            }
+            
+            // Update UI
+            const questionElement = document.getElementById(`question_${questionId}`);
+            const options = questionElement.querySelectorAll('.option');
+            const explanation = document.getElementById(`explanation_${questionId}`);
+            
+            options.forEach(option => {
+                option.classList.remove('selected', 'correct', 'incorrect');
+                const optionKey = option.textContent.trim().charAt(0);
+                
+                if (optionKey === answer) {
+                    option.classList.add('selected');
+                }
+                
+                const question = allQuestions.find(q => q.id === questionId);
+                if (optionKey === question.correct_answer) {
+                    option.classList.add('correct');
+                } else if (optionKey === answer && answer !== question.correct_answer) {
+                    option.classList.add('incorrect');
+                }
+            });
+            
+            explanation.classList.add('show');
+            updateStats();
+        }
+
+        async function refreshQuestions() {
+            if (!navigator.onLine) {
+                alert('برای به‌روزرسانی سوالات، اتصال اینترنت لازم است.');
+                return;
+            }
+
+            try {
+                document.getElementById('loading').style.display = 'block';
+                document.getElementById('content').style.display = 'none';
+                
+                await window.offlineQuestionsManager.storeAllQuestions();
+                await loadOfflineQuestions();
+                
+                alert('سوالات با موفقیت به‌روزرسانی شدند');
+            } catch (error) {
+                console.error('خطا در به‌روزرسانی سوالات:', error);
+                alert('خطا در به‌روزرسانی سوالات');
+                showContent();
+            }
+        }
+
+        async function clearOfflineCache() {
+            try {
+                if (window.offlineQuestionsManager) {
+                    await window.offlineQuestionsManager.clearCache();
+                    alert('Cache با موفقیت پاک شد. صفحه را reload کنید.');
+                    location.reload();
+                } else {
+                    // Manual IndexedDB deletion
+                    const deleteRequest = indexedDB.deleteDatabase('DiaLearnOfflineDB');
+                    deleteRequest.onsuccess = () => {
+                        alert('Cache با موفقیت پاک شد. صفحه را reload کنید.');
+                        location.reload();
+                    };
+                    deleteRequest.onerror = () => {
+                        alert('خطا در پاک کردن cache');
+                    };
+                }
+            } catch (error) {
+                console.error('خطا در پاک کردن cache:', error);
+                alert('خطا در پاک کردن cache');
+            }
+        }
+
+        function goBack() {
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = '/';
+            }
+        }
+    </script>
+</body>
+</html>

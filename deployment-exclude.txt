@@ -1,0 +1,16 @@
+node_modules\
+.git\
+tests\
+.env
+.env.example
+.gitignore
+.gitattributes
+README.md
+phpunit.xml
+vite.config.js.timestamp-*
+storage\logs\
+.vscode\
+.idea\
+*.log
+.DS_Store
+Thumbs.db

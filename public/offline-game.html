@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بازی آفلاین - دیالرن</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #7c3aed 50%, #0f172a 100%);
+            min-height: 100vh;
+            color: white;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Animated background */
+        .bg-animation {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        .bg-circle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .bg-circle:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            background: #8b5cf6;
+            top: 20%;
+            left: 20%;
+            animation-delay: 0s;
+        }
+        
+        .bg-circle:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            background: #3b82f6;
+            bottom: 20%;
+            right: 20%;
+            animation-delay: 2s;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-20px) scale(1.1); }
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .game-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+        
+        .question {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 2rem;
+            text-align: center;
+            color: #e2e8f0;
+        }
+        
+        .options {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .option {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+        
+        .option:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(139, 92, 246, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .option.selected {
+            background: rgba(139, 92, 246, 0.3);
+            border-color: #8b5cf6;
+        }
+        
+        .option.correct {
+            background: rgba(34, 197, 94, 0.3);
+            border-color: #22c55e;
+        }
+        
+        .option.incorrect {
+            background: rgba(239, 68, 68, 0.3);
+            border-color: #ef4444;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+            margin: 0.5rem;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(99, 102, 241, 0.4);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .score-display {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .score-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            font-weight: bold;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6);
+            transition: width 0.3s ease;
+        }
+        
+        .result-card {
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .result-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .offline-indicator {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation">
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+    </div>
+    
+    <div class="offline-indicator">
+        📱 حالت آفلاین
+    </div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>🎮 بازی آفلاین دیالرن</h1>
+            <p>تست دانش خود در مورد دیابت</p>
+        </div>
+        
+        <div class="game-card">
+            <div class="score-display">
+                <div class="score-item">
+                    امتیاز: <span id="score">0</span>
+                </div>
+                <div class="score-item">
+                    سوال: <span id="current-question">1</span> از <span id="total-questions">10</span>
+                </div>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress"></div>
+            </div>
+            
+            <div id="game-content">
+                <div class="question" id="question-text">
+                    در حال بارگذاری...
+                </div>
+                
+                <div class="options" id="options-container">
+                    <!-- Options will be populated by JavaScript -->
+                </div>
+                
+                <div style="text-align: center;">
+                    <button class="btn" id="next-btn" onclick="nextQuestion()" disabled>
+                        سوال بعدی
+                    </button>
+                </div>
+            </div>
+            
+            <div id="result-content" class="hidden">
+                <div class="result-card">
+                    <div class="result-icon" id="result-icon">🎉</div>
+                    <h2 id="result-title">تبریک!</h2>
+                    <p id="result-message">شما بازی را تمام کردید</p>
+                    <div class="score-item" style="margin: 1rem 0; display: inline-block;">
+                        امتیاز نهایی: <span id="final-score">0</span> از 100
+                    </div>
+                    <br>
+                    <button class="btn" onclick="restartGame()">
+                        🔄 شروع مجدد
+                    </button>
+                    <button class="btn" onclick="goHome()">
+                        🏠 بازگشت به خانه
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const questions = [
+            {
+                question: "کدام یک از علائم اصلی دیابت نوع 1 است؟",
+                options: ["تشنگی زیاد", "سردرد", "درد شکم", "خستگی عمومی"],
+                correct: 0
+            },
+            {
+                question: "بهترین زمان برای اندازه‌گیری قند خون ناشتا کدام است؟",
+                options: ["بعد از صبحانه", "قبل از صبحانه", "ظهر", "شب"],
+                correct: 1
+            },
+            {
+                question: "کدام غذا برای دیابتی‌ها مناسب‌تر است؟",
+                options: ["برنج سفید", "نان سفید", "برنج قهوه‌ای", "شیرینی"],
+                correct: 2
+            },
+            {
+                question: "ورزش منظم چه تأثیری بر قند خون دارد؟",
+                options: ["افزایش می‌دهد", "کاهش می‌دهد", "تأثیری ندارد", "نامشخص است"],
+                correct: 1
+            },
+            {
+                question: "کدام یک از انواع انسولین سریع‌الاثر است؟",
+                options: ["انسولین NPH", "انسولین لانتوس", "انسولین هومالوگ", "انسولین اولترالنت"],
+                correct: 2
+            },
+            {
+                question: "حد طبیعی قند خون ناشتا چقدر است؟",
+                options: ["70-100 mg/dl", "100-140 mg/dl", "140-180 mg/dl", "180-200 mg/dl"],
+                correct: 0
+            },
+            {
+                question: "کدام عامل باعث افزایش قند خون می‌شود؟",
+                options: ["ورزش", "استرس", "خواب کافی", "آب نوشیدن"],
+                correct: 1
+            },
+            {
+                question: "چند بار در روز باید قند خون را اندازه‌گیری کرد؟",
+                options: ["یک بار", "دو بار", "بر اساس توصیه پزشک", "هر ساعت"],
+                correct: 2
+            },
+            {
+                question: "کدام میوه برای دیابتی‌ها مناسب‌تر است؟",
+                options: ["انگور", "موز", "سیب", "خرما"],
+                correct: 2
+            },
+            {
+                question: "علامت هیپوگلیسمی (کاهش قند خون) کدام است؟",
+                options: ["تشنگی", "لرزش", "خشکی دهان", "تاری دید"],
+                correct: 1
+            }
+        ];
+        
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedOption = null;
+        
+        function initGame() {
+            currentQuestionIndex = 0;
+            score = 0;
+            selectedOption = null;
+            document.getElementById('game-content').classList.remove('hidden');
+            document.getElementById('result-content').classList.add('hidden');
+            loadQuestion();
+        }
+        
+        function loadQuestion() {
+            const question = questions[currentQuestionIndex];
+            document.getElementById('question-text').textContent = question.question;
+            document.getElementById('current-question').textContent = currentQuestionIndex + 1;
+            document.getElementById('total-questions').textContent = questions.length;
+            
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                optionElement.textContent = option;
+                optionElement.onclick = () => selectOption(index);
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            document.getElementById('next-btn').disabled = true;
+            selectedOption = null;
+            
+            updateProgress();
+        }
+        
+        function selectOption(index) {
+            if (selectedOption !== null) return;
+            
+            selectedOption = index;
+            const options = document.querySelectorAll('.option');
+            const question = questions[currentQuestionIndex];
+            
+            options.forEach((option, i) => {
+                if (i === question.correct) {
+                    option.classList.add('correct');
+                } else if (i === index && i !== question.correct) {
+                    option.classList.add('incorrect');
+                } else if (i === index) {
+                    option.classList.add('selected');
+                }
+            });
+            
+            if (index === question.correct) {
+                score += 10;
+                document.getElementById('score').textContent = score;
+            }
+            
+            document.getElementById('next-btn').disabled = false;
+        }
+        
+        function nextQuestion() {
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex >= questions.length) {
+                showResults();
+            } else {
+                loadQuestion();
+            }
+        }
+        
+        function updateProgress() {
+            const progress = ((currentQuestionIndex) / questions.length) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+        }
+        
+        function showResults() {
+            document.getElementById('game-content').classList.add('hidden');
+            document.getElementById('result-content').classList.remove('hidden');
+            
+            const finalScore = score;
+            const percentage = (finalScore / (questions.length * 10)) * 100;
+            
+            document.getElementById('final-score').textContent = finalScore;
+            
+            let resultIcon, resultTitle, resultMessage;
+            
+            if (percentage >= 80) {
+                resultIcon = '🏆';
+                resultTitle = 'عالی!';
+                resultMessage = 'دانش شما در مورد دیابت بسیار خوب است!';
+            } else if (percentage >= 60) {
+                resultIcon = '👍';
+                resultTitle = 'خوب!';
+                resultMessage = 'دانش خوبی دارید، اما می‌توانید بهتر شوید.';
+            } else {
+                resultIcon = '📚';
+                resultTitle = 'نیاز به مطالعه بیشتر';
+                resultMessage = 'توصیه می‌کنیم بیشتر در مورد دیابت مطالعه کنید.';
+            }
+            
+            document.getElementById('result-icon').textContent = resultIcon;
+            document.getElementById('result-title').textContent = resultTitle;
+            document.getElementById('result-message').textContent = resultMessage;
+            
+            // Save score to localStorage
+            const savedScores = JSON.parse(localStorage.getItem('offlineGameScores') || '[]');
+            savedScores.push({
+                score: finalScore,
+                percentage: percentage,
+                date: new Date().toISOString()
+            });
+            localStorage.setItem('offlineGameScores', JSON.stringify(savedScores));
+        }
+        
+        function restartGame() {
+            initGame();
+        }
+        
+        function goHome() {
+            window.location.href = '/dashboard';
+        }
+        
+        // Initialize game when page loads
+        window.onload = function() {
+            initGame();
+        };
+        
+        // Check online status
+        window.addEventListener('online', function() {
+            document.querySelector('.offline-indicator').style.display = 'none';
+        });
+        
+        window.addEventListener('offline', function() {
+            document.querySelector('.offline-indicator').style.display = 'block';
+        });
+    </script>
+</body>
+</html>
